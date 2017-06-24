@@ -9,6 +9,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/rel_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -38,7 +39,9 @@
             android:layout_centerHorizontal="true"
             android:id="@+id/notification_card"
             android:text="Notification is ON"
+            android:onClick="onNotificationSwitchClick"
             android:padding="16dp"
+            android:tag="1"
             android:layout_marginBottom="10dp"
             android:textAppearance="?android:textAppearanceMedium"
             android:fontFamily="sans-serif"

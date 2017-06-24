@@ -43,4 +43,8 @@ public class AppUtilz {
     public static Typeface getCustomFont(Context context){
         return Typeface.createFromAsset(context.getAssets(), "fonts/Quicksand-Regular.ttf");
     }
+
+    public static Typeface getCustomFontBold(Context context){
+        return Typeface.createFromAsset(context.getAssets(), "fonts/Quicksand-Bold.ttf");
+    }
 }

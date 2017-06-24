@@ -14,8 +14,10 @@
         android:layout_height="match_parent">
 
         <com.internetspeedlite.utilz.font.CustomFontTextView
+            android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="profile"
             android:text="@string/app_name"
             android:textColor="@android:color/white"
             android:textAppearance="?android:textAppearanceLarge"

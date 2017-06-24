@@ -35,7 +35,7 @@ public class CustomFontTextView extends TextView {
         */
         switch (textStyle) {
             case Typeface.BOLD: // bold
-                return null;
+                return Typeface.createFromAsset(context.getAssets(), "fonts/Quicksand-Bold.ttf");
 
             case Typeface.ITALIC: // italic
                 return null;

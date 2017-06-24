@@ -5,5 +5,5 @@ package com.internetspeedlite.listner;
  */
 
 public interface OnSpeedConnected {
-    void speedCount(String speed, String unit);
+    void speedCount(Long speed, String unit);
 }

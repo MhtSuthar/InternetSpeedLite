@@ -5,4 +5,6 @@ package com.internetspeedlite.utilz;
  */
 
 public class Constants {
+
+    public static final String KEY_IS_NOTIFICATI_ON = "is_notification_on";
 }

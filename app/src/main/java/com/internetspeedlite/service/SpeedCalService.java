@@ -14,11 +14,14 @@ import android.graphics.Rect;
 import android.graphics.drawable.Icon;
 import android.net.TrafficStats;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.internetspeedlite.R;
 import com.internetspeedlite.listner.OnSpeedConnected;
@@ -37,6 +40,7 @@ public class SpeedCalService extends IntentService {
     private Notification.Builder mBuilder;
     private NotificationManager mNotifyMgr;
     private String mDownloadSpeedOutput;
+    private long mDownloadSpeed;
     private String mUnits;
     private boolean mDestroyed = false;
     private final IBinder mBinder = new LocalBinder();
@@ -52,7 +56,7 @@ public class SpeedCalService extends IntentService {
         return mBinder;
     }
 
-    public void setListener(OnSpeedConnected onSpeedConnected){
+    public void setListener(OnSpeedConnected onSpeedConnected) {
         this.onSpeedConnected = onSpeedConnected;
     }
 
@@ -69,6 +73,7 @@ public class SpeedCalService extends IntentService {
     }
 
     private void initializeNotification() {
+
         mHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message inputMessage) {
@@ -76,22 +81,32 @@ public class SpeedCalService extends IntentService {
                     return;
                 }
                 Bitmap bitmap = createBitmapFromString(mDownloadSpeedOutput, mUnits);
-                Icon icon = Icon.createWithBitmap(bitmap);
-                mBuilder.setSmallIcon(icon);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mBuilder.setSmallIcon(Icon.createWithBitmap(bitmap));
+                } else {
+                    mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+                }
                 mBuilder.setContentText(getString(R.string.app_name));
-                mBuilder.setContentTitle("Speed: "+mDownloadSpeedOutput+" "+mUnits);
+                mBuilder.setContentTitle("Speed: " + mDownloadSpeedOutput + " " + mUnits);
                 mNotifyMgr.notify(mNotificationId, mBuilder.build());
-                if(onSpeedConnected != null){
-                    onSpeedConnected.speedCount(mDownloadSpeedOutput, mUnits);
+                if (onSpeedConnected != null) {
+                    onSpeedConnected.speedCount(mDownloadSpeed, mUnits);
                 }
             }
         };
 
+
         mBuilder = new Notification.Builder(this);
-        mBuilder.setSmallIcon(Icon.createWithBitmap(createBitmapFromString("0", " KB")));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mBuilder.setSmallIcon(Icon.createWithBitmap(createBitmapFromString("0", " KB/s")));
+            mBuilder.setVisibility(Notification.VISIBILITY_SECRET);
+            mBuilder.setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+        } else {
+            mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        }
         mBuilder.setContentText(getString(R.string.app_name));
-        mBuilder.setContentTitle("Speed: "+mDownloadSpeedOutput+" "+" KB");
-        mBuilder.setVisibility(Notification.VISIBILITY_SECRET);
+        mBuilder.setContentTitle("Speed: " + mDownloadSpeedOutput + " " + " KB/s");
+
         mBuilder.setPriority(Notification.PRIORITY_HIGH);
         mBuilder.setOngoing(true);
         //mBuilder.f = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR
@@ -115,8 +130,8 @@ public class SpeedCalService extends IntentService {
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setTextSize(55);
-        paint.setTypeface(AppUtilz.getCustomFont(getApplicationContext()));
+        paint.setTextSize(70);
+        paint.setTypeface(AppUtilz.getCustomFontBold(getApplicationContext()));
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setColor(Color.WHITE);
 
@@ -157,23 +172,23 @@ public class SpeedCalService extends IntentService {
 
         long mRxBytesCurrent = TrafficStats.getTotalRxBytes();
 
-        long mDownloadSpeed = mRxBytesCurrent - mRxBytesPrevious;
+        mDownloadSpeed = mRxBytesCurrent - mRxBytesPrevious;
 
         float mDownloadSpeedWithDecimals;
 
         if (mDownloadSpeed >= 1000000000) {
             mDownloadSpeedWithDecimals = (float) mDownloadSpeed / (float) 1000000000;
-            mUnits = " GB";
+            mUnits = " GB/s";
         } else if (mDownloadSpeed >= 1000000) {
             mDownloadSpeedWithDecimals = (float) mDownloadSpeed / (float) 1000000;
-            mUnits = " MB";
+            mUnits = " MB/s";
 
         } else {
             mDownloadSpeedWithDecimals = (float) mDownloadSpeed / (float) 1000;
-            mUnits = " KB";
+            mUnits = " KB/s";
         }
 
-        if (!mUnits.equals(" KB") && mDownloadSpeedWithDecimals < 100) {
+        if (!mUnits.contains(" KB") && mDownloadSpeedWithDecimals < 100) {
             mDownloadSpeedOutput = String.format(Locale.US, "%.1f", mDownloadSpeedWithDecimals);
         } else {
             mDownloadSpeedOutput = Integer.toString((int) mDownloadSpeedWithDecimals);
@@ -183,7 +198,9 @@ public class SpeedCalService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e(TAG, "onDestroy");
         mDestroyed = true;
+        mHandler.removeMessages(1);
         mNotifyMgr.cancelAll();
     }
 
