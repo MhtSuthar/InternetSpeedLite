@@ -33,10 +33,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     void openHomeScreen(){
-        Intent intent = new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, findViewById(R.id.app_name), "profile");
-        startActivity(intent, options.toBundle());
+        try {
+            Intent intent = new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(this, findViewById(R.id.app_name), "profile");
+            startActivity(intent, options.toBundle());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
