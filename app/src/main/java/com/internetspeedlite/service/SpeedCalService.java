@@ -25,8 +25,10 @@ import android.util.Log;
 
 import com.internetspeedlite.R;
 import com.internetspeedlite.listner.OnSpeedConnected;
+import com.internetspeedlite.storage.SharedPreferenceUtil;
 import com.internetspeedlite.ui.MainActivity;
 import com.internetspeedlite.utilz.AppUtilz;
+import com.internetspeedlite.utilz.Constants;
 
 import java.util.Locale;
 
@@ -88,7 +90,8 @@ public class SpeedCalService extends IntentService {
                 }
                 mBuilder.setContentText(getString(R.string.app_name));
                 mBuilder.setContentTitle("Speed: " + mDownloadSpeedOutput + " " + mUnits);
-                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true))
+                    mNotifyMgr.notify(mNotificationId, mBuilder.build());
                 if (onSpeedConnected != null) {
                     onSpeedConnected.speedCount(mDownloadSpeed, mUnits);
                 }
@@ -121,9 +124,11 @@ public class SpeedCalService extends IntentService {
 
 
         mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
 
-        startForeground(mNotificationId, mBuilder.build());
+        if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true)) {
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+            startForeground(mNotificationId, mBuilder.build());
+        }
     }
 
     private Bitmap createBitmapFromString(String speed, String units) {

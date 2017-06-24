@@ -1,5 +1,6 @@
 package com.internetspeedlite.ui;
 
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
     boolean mBound = false;
     private static final String TAG = "MainActivity";
     private AppCompatButton mNotificationSwitch;
+    private final int mNotificationId = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +53,11 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
         if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true)){
             SharedPreferenceUtil.putValue(Constants.KEY_IS_NOTIFICATI_ON, false);
             SharedPreferenceUtil.save();
-            onStop();
-            stopSpeedService();
+            NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(mNotificationId);
         }else{
             SharedPreferenceUtil.putValue(Constants.KEY_IS_NOTIFICATI_ON, true);
             SharedPreferenceUtil.save();
-            onStart();
         }
         mNotificationSwitch.setText(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true) ? "Notification is ON" : "Notification is OFF");
     }
@@ -64,7 +65,7 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
     @Override
     protected void onStart() {
         super.onStart();
-        if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true))
+        //if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true))
             startSpeedService();
     }
 
