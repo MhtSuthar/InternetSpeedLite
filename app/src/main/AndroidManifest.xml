@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -24,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.SpeedCalService"/>
+        <service android:name=".service.SpeedCalService" />
 
         <receiver
             android:name=".receiver.BootReceiver"
@@ -34,7 +35,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".receiver.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver">
@@ -43,6 +43,8 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.MeterListActivity" />
+        <activity android:name=".ui.SplashActivity"></activity>
     </application>
 
 </manifest>
