@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.internetspeedlite.R;
 import com.internetspeedlite.listner.OnSpeedConnected;
@@ -90,8 +91,8 @@ public class SpeedCalService extends IntentService {
                     mBuilder.setSmallIcon(Icon.createWithBitmap(bitmap));
                 } else {
                     mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+                    mBuilder.setLargeIcon(bitmap);
                 }
-                //mBuilder.setLargeIcon(bitmap);
                 mBuilder.setContentText(getString(R.string.app_name));
                 mBuilder.setContentTitle("Speed: " + mDownloadSpeedOutput + " " + mUnits);
                 if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true))
@@ -141,14 +142,23 @@ public class SpeedCalService extends IntentService {
         paint.setTextSize(70);
         paint.setTypeface(AppUtilz.getCustomFontBold(getApplicationContext()));
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setColor(Color.WHITE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            paint.setColor(Color.WHITE);
+        }else{
+            paint.setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+        }
+
 
         Paint unitsPaint = new Paint();
         unitsPaint.setAntiAlias(true);
         unitsPaint.setTextSize(40); // size is in pixels
         unitsPaint.setTypeface(AppUtilz.getCustomFont(getApplicationContext()));
         unitsPaint.setTextAlign(Paint.Align.CENTER);
-        unitsPaint.setColor(Color.WHITE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            unitsPaint.setColor(Color.WHITE);
+        }else{
+            unitsPaint.setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+        }
 
         Rect textBounds = new Rect();
         paint.getTextBounds(speed, 0, speed.length(), textBounds);
@@ -213,20 +223,17 @@ public class SpeedCalService extends IntentService {
     }
 
     public void setNotificationStop() {
-        Log.e(TAG, "setNotificationStop: ");
         stopForeground(true);
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
     }
 
     public void setNotificationStart() {
-        Log.e(TAG, "setNotificationStart: ");
         startForeground(mNotificationId, mBuilder.build());
     }
 
     public class LocalBinder extends Binder {
         public SpeedCalService getService() {
-            // Return this instance of LocalService so clients can call public methods
             return SpeedCalService.this;
         }
     }
