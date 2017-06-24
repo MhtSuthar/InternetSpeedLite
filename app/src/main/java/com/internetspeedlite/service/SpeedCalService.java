@@ -11,6 +11,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.net.TrafficStats;
 import android.os.Binder;
@@ -20,6 +22,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -88,6 +91,7 @@ public class SpeedCalService extends IntentService {
                 } else {
                     mBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 }
+                //mBuilder.setLargeIcon(bitmap);
                 mBuilder.setContentText(getString(R.string.app_name));
                 mBuilder.setContentTitle("Speed: " + mDownloadSpeedOutput + " " + mUnits);
                 if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true))
@@ -121,7 +125,6 @@ public class SpeedCalService extends IntentService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent
                 .FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
-
 
         mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -207,6 +210,18 @@ public class SpeedCalService extends IntentService {
         mDestroyed = true;
         mHandler.removeMessages(1);
         mNotifyMgr.cancelAll();
+    }
+
+    public void setNotificationStop() {
+        Log.e(TAG, "setNotificationStop: ");
+        stopForeground(true);
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
+
+    public void setNotificationStart() {
+        Log.e(TAG, "setNotificationStart: ");
+        startForeground(mNotificationId, mBuilder.build());
     }
 
     public class LocalBinder extends Binder {

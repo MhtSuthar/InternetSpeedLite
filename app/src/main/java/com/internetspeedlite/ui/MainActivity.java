@@ -53,9 +53,13 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
         if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true)){
             SharedPreferenceUtil.putValue(Constants.KEY_IS_NOTIFICATI_ON, false);
             SharedPreferenceUtil.save();
-            NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(mNotificationId);
+            if(mService != null){
+                mService.setNotificationStop();
+            }
         }else{
+            if(mService != null){
+                mService.setNotificationStart();
+            }
             SharedPreferenceUtil.putValue(Constants.KEY_IS_NOTIFICATI_ON, true);
             SharedPreferenceUtil.save();
         }
@@ -66,7 +70,7 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
     protected void onStart() {
         super.onStart();
         //if(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true))
-            startSpeedService();
+        startSpeedService();
     }
 
     @Override
