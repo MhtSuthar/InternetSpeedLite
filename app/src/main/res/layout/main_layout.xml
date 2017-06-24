@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="16dp"
+
+    android:background="@color/colorBg"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_above="@+id/notification_card"
+            android:layout_height="match_parent">
+
+        <com.github.anastr.speedviewlib.SpeedView
+            android:id="@+id/speedView"
+            android:layout_width="250dp"
+            app:sv_textColor="@color/textColor"
+            app:sv_speedTextColor="@android:color/white"
+            app:sv_unitTextColor="@android:color/white"
+            app:sv_unit=" KB/S"
+            app:sv_lowSpeedColor="@color/colorLowSpeed"
+            app:sv_mediumSpeedColor="@color/colorMediumSpeed"
+            app:sv_highSpeedColor="@color/colorAccent"
+            android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/notification_card"
+            android:text="Notification is ON"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:fontFamily="sans-serif"
+            android:textColor="@android:color/white"
+            android:layout_alignParentBottom="true"
+            android:elevation="3dp"
+            android:translationZ="5dp"
+            android:stateListAnimator="@null"
+            android:foreground="?attr/selectableItemBackground"
+            android:background="@drawable/gradient_bg"
+            />
+
+        <android.support.v7.widget.CardView
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            app:cardElevation="20dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:contentPadding="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content">
+
+            <com.internetspeedlite.utilz.font.CustomFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notification"
+                />
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>

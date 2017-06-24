@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#292A3E</color>
+    <color name="colorPrimaryDark">#292A3E</color>
+    <color name="colorAccent">#CC468D</color>
+    <color name="colorBg">#2C2D42</color>
+    <color name="textColor">#99989F</color>
+    <color name="colorLowSpeed">#AE9ABD</color>
+    <color name="colorMediumSpeed">#F5DFE2</color>
+    <color name="colorMiddle">#A7319F</color>
+    <color name="colorEnd">#8621C7</color>
+</resources>
