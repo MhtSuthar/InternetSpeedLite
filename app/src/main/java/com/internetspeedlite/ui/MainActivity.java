@@ -1,28 +1,28 @@
 package com.internetspeedlite.ui;
 
-import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.View;
 
 import com.github.anastr.speedviewlib.SpeedView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.internetspeedlite.R;
 import com.internetspeedlite.base.BaseActivity;
 import com.internetspeedlite.listner.OnSpeedConnected;
 import com.internetspeedlite.service.SpeedCalService;
 import com.internetspeedlite.storage.SharedPreferenceUtil;
-import com.internetspeedlite.utilz.AnimationUtils;
 import com.internetspeedlite.utilz.AppUtilz;
 import com.internetspeedlite.utilz.Constants;
+
+import static com.internetspeedlite.utilz.AppUtilz.isOnline;
 
 public class MainActivity extends BaseActivity implements OnSpeedConnected {
 
@@ -31,7 +31,14 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
     boolean mBound = false;
     private static final String TAG = "MainActivity";
     private AppCompatButton mNotificationSwitch;
-    private final int mNotificationId = 1;
+
+    /**
+     *
+     * Initialize ads here
+     */
+    private AdView adView;
+    private InterstitialAd mInterstitialAd;
+    private boolean mFullAddDisplayed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +48,43 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
     }
 
     private void init() {
+        adView = (AdView) findViewById(R.id.adView);
         mSpeedMeter = (SpeedView) findViewById(R.id.speedView);
         mSpeedMeter.setMaxSpeed(5000);
         mSpeedMeter.setSpeedTextTypeface(AppUtilz.getCustomFont(this));
         mNotificationSwitch = (AppCompatButton) findViewById(R.id.notification_card);
         mNotificationSwitch.setTypeface(AppUtilz.getCustomFontBold(this));
         mNotificationSwitch.setText(SharedPreferenceUtil.getBoolean(Constants.KEY_IS_NOTIFICATI_ON, true) ? "Notification is ON" : "Notification is OFF");
+        initAds();
+    }
+
+    private void initAds() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+       /* AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice("293A346CE5B912415358FE79AB75E057")  // My Galaxy Nexus test phone
+                .build();*/
+
+        adView.loadAd(adRequest);
+
+        if(!isOnline(this))
+            adView.setVisibility(View.GONE);
+
+        mInterstitialAd = new InterstitialAd(this);
+
+        // set the ad unit ID
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+
+        // Load ads into Interstitial Ads
+        mInterstitialAd.loadAd(adRequest);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+
+            }
+        });
     }
 
     public void onNotificationSwitchClick(View view){
@@ -101,7 +139,35 @@ public class MainActivity extends BaseActivity implements OnSpeedConnected {
 
     @Override
     public void onBackPressed() {
-        finish();
+        if (mInterstitialAd.isLoaded() && !mFullAddDisplayed) {
+            mInterstitialAd.show();
+            mFullAddDisplayed = true;
+        }else
+            finish();
+    }
+
+    @Override
+    public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

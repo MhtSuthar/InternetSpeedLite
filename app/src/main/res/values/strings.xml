@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Internet Speed Lite</string>
+
+    <!-- AdMob ad unit IDs -->
+    <string name="banner_home_footer">ca-app-pub-6025552051063958/7444253025</string>
+    <string name="interstitial_full_screen">ca-app-pub-6025552051063958/1397719420</string>
+    <string name="app_id_ads">ca-app-pub-6025552051063958~5967519828</string>
+    <!-- AdMob ad unit IDs -->
+
+
 </resources>

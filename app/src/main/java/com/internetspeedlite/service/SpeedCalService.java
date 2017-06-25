@@ -33,13 +33,16 @@ import com.internetspeedlite.storage.SharedPreferenceUtil;
 import com.internetspeedlite.ui.MainActivity;
 import com.internetspeedlite.utilz.AppUtilz;
 import com.internetspeedlite.utilz.Constants;
+import com.internetspeedlite.utilz.ObservableObject;
 
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by mht on 9/15/2016.
  */
-public class SpeedCalService extends IntentService {
+public class SpeedCalService extends IntentService implements Observer {
 
     private final int mNotificationId = 1;
     private Handler mHandler;
@@ -68,6 +71,14 @@ public class SpeedCalService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        /**
+         * ObservableObject its for getting value from AppAutoLogoutReceiver receiver class
+         */
+        ObservableObject.getInstance().addObserver(this);
+        /**
+         * End
+         */
+
         initializeNotification();
 
         while (!mDestroyed) {
@@ -90,7 +101,7 @@ public class SpeedCalService extends IntentService {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     mBuilder.setSmallIcon(Icon.createWithBitmap(bitmap));
                 } else {
-                    mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+                    mBuilder.setSmallIcon(R.mipmap.ic_launcher_white);
                     mBuilder.setLargeIcon(bitmap);
                 }
                 mBuilder.setContentText(getString(R.string.app_name));
@@ -230,6 +241,20 @@ public class SpeedCalService extends IntentService {
 
     public void setNotificationStart() {
         startForeground(mNotificationId, mBuilder.build());
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        Intent intent = (Intent) arg;
+        if(intent.getExtras().getBoolean(Constants.KEY_IS_NET_ON)){
+            SharedPreferenceUtil.putValue(Constants.KEY_IS_NOTIFICATI_ON, true);
+            SharedPreferenceUtil.save();
+            setNotificationStart();
+        }else{
+            SharedPreferenceUtil.putValue(Constants.KEY_IS_NOTIFICATI_ON, false);
+            SharedPreferenceUtil.save();
+            setNotificationStop();
+        }
     }
 
     public class LocalBinder extends Binder {

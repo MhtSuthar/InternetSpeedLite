@@ -4,8 +4,11 @@ import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.internetspeedlite.utilz.AppUtilz;
+import com.internetspeedlite.utilz.Constants;
+import com.internetspeedlite.utilz.ObservableObject;
 
 
 /**
@@ -13,12 +16,14 @@ import com.internetspeedlite.utilz.AppUtilz;
  */
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
+    private static final String TAG = "NetworkChangeReceiver";
+
     @Override
     public void onReceive(final Context context, Intent intent) {
         boolean status = AppUtilz.isOnline(context);
-        if(status){
-
-        }
+        Intent observIntent = new Intent();
+        observIntent.putExtra(Constants.KEY_IS_NET_ON, status);
+        ObservableObject.getInstance().updateValue(observIntent);
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass, Context context) {
